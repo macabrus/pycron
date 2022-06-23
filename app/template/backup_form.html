@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block main %}
+<h1>Create Schedule</h1>
+
+<form style="width: 200px" class="form-group" action="{{ url_for('create_watcher') }}" method="post">
+  <!-- simbolični naziv backup grupe -->
+  <input class="form-control" placeholder="Name" type="text" name="title">
+  
+  <!-- putanja na disku -->
+  <input class="form-control" placeholder="Full path on disk" type="text" name="path">
+  
+  <input class="form-control" placeholder="Last change timeout" name="fs_timeout">
+  
+  <button class="btn btn-success" type="submit">Create</button>
+</form>
+{% endblock %}

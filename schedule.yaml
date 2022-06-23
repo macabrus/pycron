@@ -1,0 +1,32 @@
+
+# Example configuration for PyCron
+
+---
+timers:
+  - minute: 0
+    hour: 0
+    day: '*'
+    month: '*'
+    year: '*'
+    exec: 'bash /Users/bernard/Projects/personal/backup/restic_backup.sh'
+    policy:
+      retry: 0
+  - minute: 0
+    hour: 12
+    day: '*'
+    month: '*'
+    year: '*'
+    exec: restic backup --full
+    policy:
+      retry: 0
+
+# pycron implicitly listens to event
+# for file changes on this configuration file
+# it triggers reload when config is changed
+
+fs_events:
+  - folder: /Users/bernard/Desktop/
+    debounce: true
+    after_minutes: 5
+    # interpolated variables could be 'dir' & 'file'
+    cmd: restic backup --with-folders ${dir}

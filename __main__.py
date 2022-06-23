@@ -1,6 +1,8 @@
 import os
+import yaml
 import re
 import itertools
+import json
 import asyncio as aio
 
 from dateutil import parser as date_parser
@@ -209,15 +211,37 @@ def main():
     parse main file and run loop
     '''
     tasks = []
-    with open('schedule', 'r') as conf:
-        for index, line in enumerate(conf):
-            if not line.strip():
-                continue
-            task = parse_task(index, line)
-            #print(task)
-            tasks.append(handle_task(task))
+    config = read_config('schedule.yaml')
+    for index, line in enumerate(conf):
+        if not line.strip():
+            continue
+        task = parse_task(index, line)
+        #print(task)
+        tasks.append(handle_task(task))
     aio.run(gather(tasks))
 
+from fswatch import Monitor
+def register_config_listener(path):
+    monitor = Monitor()
+    monitor.add_path(path)
+    def callback(path, evt_time, flags, flags_num, event_num):
+        print(path.decode())
+        print(flags.decode())
+    monitor.set_callback(callback)
+    monitor.start()
+
+
+# reading config file
+def read_config():
+    with open("schedule.yaml", "r") as stream:
+        try:
+            return yaml.safe_load(stream)
+        except yaml.YAMLError as exc:
+            print(exc)
 
 if __name__ == '__main__':
+    #register_config_listener('./test/')
+    #print(json.dumps(read_config(), indent=4))
+    # exit(0)
     main()
+
